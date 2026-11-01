@@ -124,7 +124,7 @@ async def timeframe_selected(update: Update, context: ContextTypes.DEFAULT_TYPE)
         parse_mode="Markdown"
     )
     
-    time.sleep(2)
+
     
     signal_type, confidence, strength, super_trend_dir, bb_status = calculate_advanced_indicators(pair, timeframe)
     
