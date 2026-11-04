@@ -1,6 +1,8 @@
 import os
 import time
 import logging
+import threading
+from http.server import HTTPServer, BaseHTTPRequestHandler
 import pandas as pd
 import numpy as np
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
@@ -12,6 +14,20 @@ TOKEN = "8963497539:AAHaFyJjC1fhEKZUDgVJvwGHxo2hoVknyA4"
 # Logging setup
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
 logger = logging.getLogger(__name__)
+
+# --- Dummy HTTP Server for Render Port Binding (Deploy Failed حل کرنے کے لیے) ---
+class SimpleHandler(BaseHTTPRequestHandler):
+    def do_GET(self):
+        self.send_response(200)
+        self.end_headers()
+        self.wfile.write(b"Akbari AI Signals Bot is Running!")
+    def log_message(self, format, *args):
+        return
+
+def run_dummy_server():
+    port = int(os.environ.get("PORT", 10000))
+    server = HTTPServer(('0.0.0.0', port), SimpleHandler)
+    server.serve_forever()
 
 # --- SuperTrend, Bollinger Bands & Indicators Calculation Logic ---
 def calculate_advanced_indicators(pair, timeframe):
@@ -154,6 +170,10 @@ async def timeframe_selected(update: Update, context: ContextTypes.DEFAULT_TYPE)
 
 # --- Main Application Runner ---
 def main():
+    # Start the dummy web server in a separate background thread to satisfy Render's port requirement
+    server_thread = threading.Thread(target=run_dummy_server, daemon=True)
+    server_thread.start()
+    
     app = Application.builder().token(TOKEN).build()
     
     app.add_handler(CommandHandler("start", start))
