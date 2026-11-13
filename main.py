@@ -254,7 +254,7 @@ async def timeframe_selected(update: Update, context: ContextTypes.DEFAULT_TYPE)
         f"🌐 Asset: {pair}\n"
         f"⏳ Timeframe: {timeframe}\n"
         f"📊 Market Type: {market_type}\n\n"
-        f"{action_emoji} Action: *{signal_type}*\n"
+        f"{action_emoji} Action: {signal_type}\n"
         f"🎯 Confidence / Accuracy: {confidence}%\n"
         f"⚡ Strength Meter: {strength}\n"
         f"🛡️ Trend Filter: SuperTrend ({super_trend_dir})\n"
@@ -264,16 +264,22 @@ async def timeframe_selected(update: Update, context: ContextTypes.DEFAULT_TYPE)
         f"⚠️ نوٹ: ٹریڈنگ میں خطرہ شامل ہوتا ہے، احتیاط برتیں۔"
     )
     
-    # سگنल براہ راست آپ کے چینل پر بھیجنے کے لیے (بغیر فارवर्ड ٹیگ کے)
+    # سگنل براہ راست آپ کے چینل پر بھیجنے کے لیے (بغیر فارवर्ड ٹیگ کے)
     try:
         await context.bot.send_message(
             chat_id=CHANNEL_USERNAME,
             text=result_text,
             parse_mode="Markdown"
         )
-        # ایڈمن کو بتانے کے لیے کہ سگنل چینل پر چلا گیا ہے
+        
+        # یہاں "New Analysis" کا بٹਨ ایڈ کر دیا گیا ہے
+        keyboard = [[InlineKeyboardButton("🔄 New Analysis", callback_data="back_to_start")]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        
+        # ایڈمن کو بتانے کے لیے کہ سگنل چینل پر چلا گیا ہے (ساتھ میں بٹن بھی)
         await query.message.edit_text(
             f"✅ Signal Successfully Posted to Channel!\n\n{result_text}",
+            reply_markup=reply_markup,
             parse_mode="Markdown"
         )
     except Exception as e:
