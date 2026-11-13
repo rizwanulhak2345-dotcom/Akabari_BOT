@@ -17,7 +17,7 @@ CHANNEL_USERNAME = "-1004360214961"
 
 # Logging setup
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-logger = logging.getLogger(_name_)
+logger = logging.getLogger(__name__)
 
 # --- Dummy HTTP Server for Render Port Binding ---
 class SimpleHandler(BaseHTTPRequestHandler):
