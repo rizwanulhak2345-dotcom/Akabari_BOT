@@ -13,7 +13,7 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Cont
 TOKEN = "8963497539:AAHaFyJjC1fhEKZUDgVJvwGHxo2hoVknyA4"
 
 # آپ کے چینل کا یوزرنیم (جہاں سگنلز خودکار طور پر پوسٹ ہوں گے)
-CHANNEL_USERNAME = "@RM_Trader_Signals"
+CHANNEL_USERNAME = "-1004360214961"
 
 # Logging setup
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
