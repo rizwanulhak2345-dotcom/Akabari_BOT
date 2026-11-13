@@ -12,9 +12,12 @@ from telegram.ext import Application, CommandHandler, CallbackQueryHandler, Cont
 # --- Telegram Bot Token ---
 TOKEN = "8963497539:AAHaFyJjC1fhEKZUDgVJvwGHxo2hoVknyA4"
 
+# آپ کے چینل کا یوزرنیم (جہاں سگنلز خودکار طور پر پوسٹ ہوں گے)
+CHANNEL_USERNAME = "@RM_Trader_Signals"
+
 # Logging setup
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger(_name_)
 
 # --- Dummy HTTP Server for Render Port Binding ---
 class SimpleHandler(BaseHTTPRequestHandler):
@@ -169,7 +172,7 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
     
     welcome_text = (
-        "🤖 *Akbari AI Signals* 🚀\n\n"
+        "🤖 Akbari AI Signals 🚀\n\n"
         " خوش آمدید! پروفیشنل نارمل پیئرز اور او ٹی سی (OTC) پیئرز فعال ہیں۔\n"
         "براہ کرم تجزیہ (Analysis) کے لیے نیچے دیے گئے پیئرز میں سے کسی ایک کا انتخاب کریں:"
     )
@@ -202,7 +205,7 @@ async def pair_selected(update: Update, context: ContextTypes.DEFAULT_TYPE):
     reply_markup = InlineKeyboardMarkup(keyboard)
     
     await query.message.edit_text(
-        f"📊 *Selected Pair:* `{display_name}`\n\nاب براہ کرم ٹائم فریم (Timeframe) منتخب کریں:",
+        f"📊 Selected Pair: {display_name}\n\nاب براہ کرم ٹائم فریم (Timeframe) منتخب کریں:",
         reply_markup=reply_markup,
         parse_mode="Markdown"
     )
@@ -223,13 +226,13 @@ async def timeframe_selected(update: Update, context: ContextTypes.DEFAULT_TYPE)
     market_type = "OTC / High-Frequency" if "OTC" in pair else "Real Interbank Market (Normal)"
     
     await query.message.edit_text(
-        f"🔄 *Akbari AI Core:* Scanning market & calculating ADX strength for `{pair}` on `{timeframe}`...\nبراہ کرم انتظار کریں...",
+        f"🔄 Akbari AI Core: Scanning market & calculating ADX strength for {pair} on {timeframe}...\nبراہ کرم انتظار کریں...",
         parse_mode="Markdown"
     )
     
     signal_type, confidence, strength, super_trend_dir, bb_status, adx_val = calculate_advanced_indicators(pair, timeframe)
     
-    # ADX Status description based on user's preference (20, 25, 30, 40 etc.)
+    # ADX Status description based on user's preference
     if adx_val >= 30:
         adx_desc = f"🔥 {adx_val} (Very Strong Trend)"
     elif adx_val >= 25:
@@ -247,26 +250,38 @@ async def timeframe_selected(update: Update, context: ContextTypes.DEFAULT_TYPE)
         arrow = "📉"
         
     result_text = (
-        f"{arrow} *AKBARI AI CONFIRMED SIGNAL* {arrow}\n\n"
-        f"🌐 *Asset:* `{pair}`\n"
-        f"⏳ *Timeframe:* `{timeframe}`\n"
-        f"📊 *Market Type:* `{market_type}`\n\n"
-        f"{action_emoji} *Action:* **{signal_type}**\n"
-        f"🎯 *Confidence / Accuracy:* `{confidence}%`\n"
-        f"⚡ *Strength Meter:* `{strength}`\n"
-        f"🛡️ *Trend Filter:* `SuperTrend ({super_trend_dir})`\n"
-        f"🌀 *Bollinger Bands:* `Active ({bb_status})`\n"
-        f"🧭 *ADX Strength:* `{adx_desc}`\n"
-        f"✅ *Indicators:* `EMA + RSI + MACD + SuperTrend + ADX`\n\n"
-        f"⚠️ *نوٹ:* ٹریڈنگ میں خطرہ شامل ہوتا ہے، احتیاط برتیں۔"
+        f"{arrow} AKBARI AI CONFIRMED SIGNAL {arrow}\n\n"
+        f"🌐 Asset: {pair}\n"
+        f"⏳ Timeframe: {timeframe}\n"
+        f"📊 Market Type: {market_type}\n\n"
+        f"{action_emoji} Action: *{signal_type}*\n"
+        f"🎯 Confidence / Accuracy: {confidence}%\n"
+        f"⚡ Strength Meter: {strength}\n"
+        f"🛡️ Trend Filter: SuperTrend ({super_trend_dir})\n"
+        f"🌀 Bollinger Bands: Active ({bb_status})\n"
+        f"🧭 ADX Strength: {adx_desc}\n"
+        f"✅ Indicators: EMA + RSI + MACD + SuperTrend + ADX\n\n"
+        f"⚠️ نوٹ: ٹریڈنگ میں خطرہ شامل ہوتا ہے، احتیاط برتیں۔"
     )
     
-    keyboard = [
-        [InlineKeyboardButton("🔄 New Analysis", callback_data="back_to_start")]
-    ]
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    
-    await query.message.edit_text(result_text, reply_markup=reply_markup, parse_mode="Markdown")
+    # سگنल براہ راست آپ کے چینل پر بھیجنے کے لیے (بغیر فارवर्ड ٹیگ کے)
+    try:
+        await context.bot.send_message(
+            chat_id=CHANNEL_USERNAME,
+            text=result_text,
+            parse_mode="Markdown"
+        )
+        # ایڈمن کو بتانے کے لیے کہ سگنل چینل پر چلا گیا ہے
+        await query.message.edit_text(
+            f"✅ Signal Successfully Posted to Channel!\n\n{result_text}",
+            parse_mode="Markdown"
+        )
+    except Exception as e:
+        logger.error(f"Error sending message to channel: {e}")
+        # اگر کسی وجہ سے چینل پر نہ جائے تو یہیں شو کر دے
+        keyboard = [[InlineKeyboardButton("🔄 New Analysis", callback_data="back_to_start")]]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        await query.message.edit_text(result_text, reply_markup=reply_markup, parse_mode="Markdown")
 
 # --- Main Application Runner ---
 def main():
@@ -282,5 +297,5 @@ def main():
     print("Akbari AI Signals bot is running successfully with ADX Filter & Dummy Server...")
     app.run_polling()
 
-if __name__ == "__main__":
+if _name_ == "_main_":
     main()
