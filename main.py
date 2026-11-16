@@ -10,7 +10,7 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
 # --- Telegram Bot Token ---
-TOKEN = "8963497539:AAHaFyJjC1fhEKZUDgVJvwGHxo2hoVknyA4"
+TOKEN = "8963497539:AAHrASLa1abff-4AoV7eefAW73_vNRi1kK4"
 
 # آپ کے چینل کا یوزرنیم (جہاں سگنلز خودکار طور پر پوسٹ ہوں گے)
 CHANNEL_USERNAME = "-1004360214961"
