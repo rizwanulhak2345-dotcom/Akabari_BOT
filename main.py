@@ -10,8 +10,8 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
 # --- Telegram Bot Token ---
-TOKEN = "8963497539:AAEhFzP1t_ZbwYL6Q1c1EXsLXE8oyTYx1i0"
-CHANNEL_USERNAME = "-1004360214961"  # यहाँ आपका चैनल परमानेंट सेट है
+TOKEN = "8963497539:AAEhFzPlt_ZbwYL6Qlc1EXsLXE8oyTYx1i0"
+CHANNEL_USERNAME = "-1004360214961" 
 
 bot_stats = {"total_signals": 0, "real_wins": 0, "real_losses": 0}
 
