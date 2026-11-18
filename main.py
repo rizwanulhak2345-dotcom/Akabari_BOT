@@ -10,10 +10,10 @@ from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Application, CommandHandler, CallbackQueryHandler, ContextTypes
 
 # --- Telegram Bot Token ---
-TOKEN = "8963497539:AAEv7JBs0Rf1OVSBqssgDhvbsGjbKRK6AJs"
+TOKEN = os.environ.get("TELEGRAM_TOKEN")
+CHANNEL_USERNAME = os.environ.get("CHANNEL_USERNAME")
 
-# آپ کے چینل کا یوزرنیم (جہاں سگنلز خودکار طور پر پوسٹ ہوں گے)
-CHANNEL_USERNAME = "-1004360214961"
+
 
 # Logging setup
 logging.basicConfig(format='%(asctime)s - %(name)s - %(levelname)s - %(message)s', level=logging.INFO)
